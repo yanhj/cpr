@@ -139,7 +139,7 @@ TEST(SslTests, LoadCertFromBufferTestSimpel) {
     std::string crtPath{baseDirPath + "certificates/"};
     std::string keyPath{baseDirPath + "keys/"};
     std::string certBuffer = loadCertificateFromFile(crtPath + "root-ca.crt");
-    SslOptions sslOpts = Ssl(ssl::CaBuffer{std::move(certBuffer)}, ssl::CertFile{crtPath + "client.crt"}, ssl::KeyFile{keyPath + "client.key"}, ssl::VerifyPeer{false}, ssl::VerifyHost{false}, ssl::VerifyStatus{false});
+    SslOptions sslOpts = Ssl(ssl::CaBuffer{std::move(certBuffer)}, ssl::CertFile{crtPath + "client.crt"}, ssl::KeyFile{keyPath + "client.key"});
     Response response = cpr::Get(url, sslOpts, Timeout{5000}, Verbose{});
     std::string expected_text = "Hello world!";
     EXPECT_EQ(expected_text, response.text);
