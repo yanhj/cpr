@@ -543,7 +543,7 @@ void Session::SetSslOptions(const SslOptions& options) {
 #ifdef OPENSSL_BACKEND_USED
     if (!options.ca_buffer.empty()) {
         curl_easy_setopt(curl_->handle, CURLOPT_SSL_CTX_FUNCTION, sslctx_function_load_ca_cert_from_buffer);
-        curl_easy_setopt(curl_->handle, CURLOPT_SSL_CTX_DATA, options.ca_buffer.c_str());
+        curl_easy_setopt(curl_->handle, CURLOPT_SSL_CTX_DATA, &(options.ca_buffer));
     }
 #endif
 #endif
