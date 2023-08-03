@@ -48,11 +48,25 @@ macro(cpr_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
     message(STATUS "  ${OPTION_NAME}: ${${OPTION_NAME}}")
 endmacro()
 
+macro(cpr_option_string OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
+    set(${OPTION_NAME} ${OPTION_DEFAULT} CACHE STRING ${OPTION_TEXT})
+    if(DEFINED ENV{${OPTION_NAME}})
+        # Allow setting the option through an environment variable
+        set(${OPTION_NAME} $ENV{${OPTION_NAME}})
+    endif()
+    if(${OPTION_NAME})
+        add_definitions(-D${OPTION_NAME})
+    endif()
+    message(STATUS "  ${OPTION_NAME}: ${${OPTION_NAME}}")
+endmacro()
+
 option(BUILD_SHARED_LIBS "Build libraries as shared libraries" ON)
 message(STATUS "C++ Requests CMake Options")
 message(STATUS "=======================================================")
 cpr_option(CPR_GENERATE_COVERAGE "Set to ON to generate coverage reports." OFF)
 cpr_option(CPR_CURL_NOSIGNAL "Set to ON to disable use of signals in libcurl." OFF)
+cpr_option_string(CPR_CURL_FETCH_CONTENT_URL "If 'CPR_USE_SYSTEM_CURL' is set to OFF this specifies the URL for where to download the used curl version from. A list of tags/versions can be found here: https://github.com/curl/curl/releases" "https://github.com/curl/curl/releases/download/curl-8_2_1/curl-8.2.1.tar.xz")
+cpr_option_string(CPR_CURL_FETCH_CONTENT_URL_HASH "The SHA256 file hash for the file specified in 'CPR_CURL_FETCH_CONTENT_URL'." "dd322f6bd0a20e6cebdfd388f69e98c3d183bed792cf4713c8a7ef498cba4894")
 cpr_option(CURL_VERBOSE_LOGGING "Curl verbose logging during building curl" OFF)
 cpr_option(CPR_USE_SYSTEM_GTEST "If ON, this project will look in the system paths for an installed gtest library. If none is found it will use the built-in one." OFF)
 cpr_option(CPR_USE_SYSTEM_CURL "If enabled we will use the curl lib already installed on this system." OFF)
@@ -275,8 +289,8 @@ else()
         cmake_policy(SET CMP0135 NEW)
     endif()
     FetchContent_Declare(curl
-                         URL                    https://github.com/curl/curl/releases/download/curl-7_80_0/curl-7.80.0.tar.xz
-                         URL_HASH               SHA256=a132bd93188b938771135ac7c1f3ac1d3ce507c1fcbef8c471397639214ae2ab # the file hash for curl-7.80.0.tar.xz
+                         URL                    ${CPR_CURL_FETCH_CONTENT_URL}
+                         URL_HASH               SHA256=${CPR_CURL_FETCH_CONTENT_URL_HASH}
                          USES_TERMINAL_DOWNLOAD TRUE)   # <---- This is needed only for Ninja to show download progress
     FetchContent_MakeAvailable(curl)
 
