@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
-project(cpr VERSION 1.11.0 LANGUAGES CXX)
+project(cpr VERSION 1.11.0
+            DESCRIPTION "cpr - C++ Requests: Curl for People, a spiritual port of Python Requests."
+            HOMEPAGE_URL "https://github.com/libcpr/cpr"
+            LANGUAGES CXX)
 
 math(EXPR cpr_VERSION_NUM "${cpr_VERSION_MAJOR} * 0x10000 + ${cpr_VERSION_MINOR} * 0x100 + ${cpr_VERSION_PATCH}" OUTPUT_FORMAT HEXADECIMAL)
 configure_file("${cpr_SOURCE_DIR}/cmake/cprver.h.in" "${cpr_BINARY_DIR}/cpr_generated_includes/cpr/cprver.h")
@@ -48,6 +51,21 @@ macro(cpr_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
     message(STATUS "  ${OPTION_NAME}: ${${OPTION_NAME}}")
 endmacro()
 
+macro(cpr_option_strings OPTION_NAME OPTION_TEXT OPTION_DEFAULT OPTIONS)
+    if(DEFINED ENV{${OPTION_NAME}})
+        # Allow overriding the option through an environment variable
+        set(${OPTION_NAME} $ENV{${OPTION_NAME}} CACHE STRING ${OPTION_TEXT})
+    else()
+        set(${OPTION_NAME} ${OPTION_DEFAULT} CACHE STRING ${OPTION_TEXT})
+    endif()
+    set_property(CACHE ${OPTION_NAME} PROPERTY STRINGS ${OPTIONS})  
+
+    if(${OPTION_NAME})
+        add_definitions(-D${OPTION_NAME}="")
+    endif()
+    message(STATUS "  ${OPTION_NAME}: ${${OPTION_NAME}}")
+endmacro()
+
 option(BUILD_SHARED_LIBS "Build libraries as shared libraries" ON)
 message(STATUS "C++ Requests CMake Options")
 message(STATUS "=======================================================")
@@ -74,6 +92,7 @@ cpr_option(CPR_DEBUG_SANITIZER_FLAG_ADDR "Enables the AddressSanitizer for debug
 cpr_option(CPR_DEBUG_SANITIZER_FLAG_LEAK "Enables the LeakSanitizer for debug builds." OFF)
 cpr_option(CPR_DEBUG_SANITIZER_FLAG_UB "Enables the UndefinedBehaviorSanitizer for debug builds." OFF)
 cpr_option(CPR_DEBUG_SANITIZER_FLAG_ALL "Enables all sanitizers for debug builds except the ThreadSanitizer since it is incompatible with the other sanitizers." OFF)
+cpr_option_strings(CPR_CPACK "Set the CPack generator used. Possible values are: OFF, DEB, RPM" "OFF" "OFF;DEB;RPM")
 message(STATUS "=======================================================")
 
 if (CPR_FORCE_USE_SYSTEM_CURL)
@@ -101,6 +120,11 @@ if(CPR_ENABLE_CPPCHECK)
         message(FATAL_ERROR "Cppcheck is incompatible with building tests. Make sure to disable CPR_ENABLE_CPPCHECK or disable tests by setting CPR_BUILD_TESTS and CPR_BUILD_TESTS_SSL to OFF. This is because Cppcheck would try to check the google tests source code and then fail. ")
     endif()
     include(cmake/cppcheck.cmake)
+endif()
+
+# cpack
+if(NOT "${CPR_CPACK}" STREQUAL "OFF")
+    include(cmake/cpack.cmake)
 endif()
 
 # SSL
