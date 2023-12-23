@@ -4,12 +4,12 @@ if("${CPR_CPACK}" STREQUAL "DEB")
     # Docs: https://cmake.org/cmake/help/latest/cpack_gen/deb.html
     message(STATUS "CPack debian backend enabled")
 
+    set(CPACK_GENERATOR "DEB")
     set(CPACK_DEB_COMPONENT_INSTALL ON)
-    set(CPACK_DEBIAN_PACKAGE_NAME "${PROJECT_NAME}")
-    # set(CPACK_DEBIAN_FILE_NAME "${PROJECT_NAME}.deb")
+    set(CPACK_DEBIAN_PACKAGE_NAME "lib${PROJECT_NAME}")
+    set(CPACK_DEBIAN_FILE_NAME "lib${PROJECT_NAME}_${PROJECT_VERSION}.deb")
     set(CPACK_DEBIAN_PACKAGE_VERSION "${PROJECT_VERSION}")
     set(CPACK_DEBIAN_PACKAGE_RELEASE "1")
-    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "")
     execute_process(COMMAND dpkg --print-architecture
                     OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
 
@@ -26,6 +26,13 @@ if("${CPR_CPACK}" STREQUAL "DEB")
     set(CPACK_DEBIAN_COMPRESSION_TYPE "gzip")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
     set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${PROJECT_HOMEPAGE_URL}")
+
+    set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git"
+                                  "/\\\\.github"
+                                  "/debian/"
+                                  "/.*build-.*/"
+                                  ${PROJECT_BINARY_DIR})
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 endif()
 
 include(CPack)

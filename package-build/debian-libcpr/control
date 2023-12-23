@@ -33,7 +33,7 @@ Description: C++ wrapper around the libcurl library - runtime library
  This package contains the runtime, shared library of cpr,
  Curl for People.
  .
- The project is inspried by the Python Request project.
+ The project is inspired by the Python Request project.
  Using the more expressive language facilities of C++11,
  it captures the essence of making network calls into a
  few concise idioms.
