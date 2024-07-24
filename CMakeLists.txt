@@ -231,11 +231,10 @@ else()
     endif()
     # Disable linting for curl
     clear_variable(DESTINATION CMAKE_CXX_CLANG_TIDY BACKUP CMAKE_CXX_CLANG_TIDY_BKP)
-
     FetchContent_Declare(curl
-                         URL                    https://github.com/curl/curl/releases/download/curl-8_4_0/curl-8.4.0.tar.xz
-                         URL_HASH               SHA256=16c62a9c4af0f703d28bda6d7bbf37ba47055ad3414d70dec63e2e6336f2a82d # the file hash for curl-8.4.0.tar.xz
-                         USES_TERMINAL_DOWNLOAD TRUE)   # <---- This is needed only for Ninja to show download progress
+            URL                    https://github.com/curl/curl/releases/download/curl-7_88_0/curl-7.88.0.tar.xz
+            URL_HASH               SHA256=fd17432cf28714a4cf39d89e26b8ace0d8901199fe5d01d75eb0ae3bbfcc731f # the file hash for curl-7.80.0.tar.xz
+            USES_TERMINAL_DOWNLOAD TRUE)   # <---- This is needed only for Ninja to show download progress
     FetchContent_MakeAvailable(curl)
 
     restore_variable(DESTINATION CMAKE_CXX_CLANG_TIDY BACKUP CMAKE_CXX_CLANG_TIDY_BKP)
@@ -262,6 +261,10 @@ if(CPR_BUILD_TESTS)
                              URL                    https://github.com/google/googletest/archive/release-1.11.0.tar.gz
                              URL_HASH               SHA256=b4870bf121ff7795ba20d20bcdd8627b8e088f2d1dab299a031c1034eddc93d5 # the file hash for release-1.11.0.tar.gz
                              USES_TERMINAL_DOWNLOAD TRUE)   # <---- This is needed only for Ninja to show download progress
+        FetchContent_Declare(curl
+                URL                    https://github.com/curl/curl/releases/download/curl-7_88_0/curl-7.88.0.tar.xz
+                URL_HASH               SHA256=fd17432cf28714a4cf39d89e26b8ace0d8901199fe5d01d75eb0ae3bbfcc731f # the file hash for curl-7.80.0.tar.xz
+                USES_TERMINAL_DOWNLOAD TRUE)   # <---- This is needed only for Ninja to show download progress
         FetchContent_MakeAvailable(googletest)
 
         restore_variable(DESTINATION CMAKE_CXX_CLANG_TIDY BACKUP CMAKE_CXX_CLANG_TIDY_BKP)

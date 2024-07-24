@@ -52,3 +52,7 @@ _site/
 # clangd
 .cache/
 
+
+
+cmake-build-*
+.idea/
